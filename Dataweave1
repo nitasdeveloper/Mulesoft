@@ -1,0 +1,55 @@
+INPUT: {
+  "langs": [
+    {
+      "name": "Bar",
+      "language": "Scala"
+    },
+    {
+      "name": "Foo",
+      "language": "Java"
+    },
+    {
+      "name": "FooBar",
+      "language": "Java"
+    }
+  ]
+}
+
+OUTPUT: 
+{
+  "langs": [
+    {
+      "Scala": [
+        {
+          "name": "Bar"
+        }
+      ]
+    },
+    {
+      "Java": [
+        {
+          "name": "Foo"
+        },
+        {
+          "name": "FooBar"
+        }
+      ]
+    }
+  ]
+}
+
+Code: 
+%dw 2.0
+output application/json
+var lang = payload.langs.*language distinctBy ((item, index) -> item )
+
+---
+langs: lang map {
+
+"$($)": (payload.langs filter ((item, index) -> item.language == $) map ((item2, index2) -> {
+
+name: item2.name
+
+})  )
+
+}
